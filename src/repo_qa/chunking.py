@@ -4,11 +4,11 @@ from pathlib import Path
 
 from .config import SystemConfig
 
-def extract_code_blocks(repo_path: str, chunk_size: int = 100):
+def extract_code_blocks(repo_path: str):
     """
-    Walks through all files in repo_path and yields (chunk_text, metadata).
+    Walks through all files in repo_path (that also has an interesting suffix) and yields (chunk_text, metadata).
     - For Python files: splits by function/class definitions
-    - For non-Python files: splits into fixed-size chunks
+    - For non-Python files: no split, entire file is taken as a single chunk
     """
     repo_path = Path(repo_path)
     for file in repo_path.rglob("*"):
@@ -43,15 +43,15 @@ def extract_code_blocks(repo_path: str, chunk_size: int = 100):
                 else:
                     # Handle non-Python files by splitting into fixed-size chunks
                     lines = source.split("\n")
-                    for i in range(0, len(lines), chunk_size):
-                        chunk_lines = lines[i:i + chunk_size]
+                    for i in range(0, len(lines), SystemConfig.max_chunk_size):
+                        chunk_lines = lines[i:i + SystemConfig.max_chunk_size]
                         chunk = "\n".join(chunk_lines)
                         metadata = {
                             "file_path": str(file),
-                            "name": f"chunk_{i//chunk_size + 1}",
+                            "name": f"chunk_{i//SystemConfig.max_chunk_size + 1}",
                             "block_type": "text",
                             "start_line": i + 1,
-                            "end_line": min(i + chunk_size, len(lines))
+                            "end_line": min(i + SystemConfig.max_chunk_size, len(lines))
                         }
                         yield chunk, metadata
             except Exception as e:

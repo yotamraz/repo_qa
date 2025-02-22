@@ -11,23 +11,19 @@ from .indexing import build_index
 from .retrieval import retrieve_with_callgraph
 from .generation import generate_answer
 
+class RepoData:
+    def __init__(self, collections=None, call_graph=None):
+        self.collection = collections
+        self.call_graph = call_graph
 app = FastAPI()
-
-# Load the .env file from the base repo level.
-
-# Global variables to store the collection + call graph
-collection = None
-call_graph = None
+repo_data = RepoData()
 
 @app.post("/index_repo")
 def index_repo(payload: dict = Body(...)):
     """
     Build the index and call graph when the app starts.
-    In a production environment, you might do this differently or
-    cache/persist the DB so you don't re-build every time.
     """
 
-    global collection, call_graph
     repo_path = payload["repo_path"]
     if not os.path.exists(repo_path):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"repo path does not exist: {repo_path}")
@@ -37,8 +33,8 @@ def index_repo(payload: dict = Body(...)):
         openai_api_key=os.getenv("OPENAI_API_KEY", None),
         embedding_model_name=os.getenv("EMBEDDING_MODEL_NAME", None)
     )
-    collection = col
-    call_graph = cg
+    repo_data.collection = col
+    repo_data.call_graph = cg
 
     logger.info(f"finished indexing repo: {repo_path}")
     return JSONResponse(content={"message": f"Successfully indexed {repo_path}"})
@@ -53,7 +49,7 @@ def query_repo(payload: dict = Body(...)):
     logger.info(f"building answer for user question: {question}")
 
     # 1. Retrieve with callgraph
-    retrieved = retrieve_with_callgraph(question, collection, call_graph)
+    retrieved = retrieve_with_callgraph(question, repo_data.collection, repo_data.call_graph)
     # 2. Generate answer
     logger.info(f"generating final answer")
     final_answer = generate_answer(
