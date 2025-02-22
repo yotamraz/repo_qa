@@ -1,33 +1,16 @@
 """
 To run the evaluation script repo_qa package must be installed
 """
-
-import time
 import multiprocessing
 import argparse
 import json
 
 import requests
-import uvicorn
 from loguru import logger
 from dotenv import load_dotenv
 from rouge_score import rouge_scorer
 
-from repo_qa.api import app
-
-def wait_for_server(url, timeout=10):
-    start_time = time.time()
-    while time.time() - start_time < timeout:
-        try:
-            response = requests.get(url)
-            if response.status_code == 200:
-                logger.info("API server is up!")
-                return True
-        except requests.ConnectionError:
-            pass
-        time.sleep(0.5)
-    logger.info("API server did not start in time.")
-    return False
+from repo_qa.utils import wait_for_server, run_api_server
 
 def evaluate(endpoint="http://0.0.0.0:8000/query_repo", reference_file="reference_qa.json"):
     """
@@ -91,8 +74,6 @@ def evaluate(endpoint="http://0.0.0.0:8000/query_repo", reference_file="referenc
     else:
         logger.info("No valid reference questions evaluated.")
 
-def run_api_server(host: str, port: int):
-    uvicorn.run(app, host=host, port=port)
 
 def arg_parse():
     parser = argparse.ArgumentParser()
