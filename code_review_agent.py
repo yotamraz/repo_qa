@@ -61,7 +61,7 @@ def generate_code_review(max_iterations: int, diff_text: str) -> str:
     """
 
     system_prompt = (
-        "You are a senior software engineer doing a code review for other engineers. You can call a function "
+        "You are a senior software engineer doing a code review (pull request before merge) for other engineers on the team. You can call a function "
         "to ask the RAG-based code QA server for context about the code base. "
         "Use any discovered info (calling the function as many times as needed) to produce "
         "a thorough code review of the changes in the user's diff."
@@ -107,7 +107,7 @@ def generate_code_review(max_iterations: int, diff_text: str) -> str:
                 fn_name = msg["function_call"]["name"]
                 if fn_name == "ask_code_qa_server":
                     # The LLM is requesting context from the QA server
-                    fn_args = msg["function_call"]["arguments"]
+                    fn_args = eval(msg["function_call"]["arguments"])
                     question = fn_args.get("question", "")
                     # call the actual function
                     answer = ask_code_qa_server(question)
