@@ -90,6 +90,8 @@ def build_index(repo_path: str,
 
     # 3. Embedding function
     logger.info(f"creating an embedding function using {embedding_model_name} model")
+
+    # alternatively, CoherentChunkOpenAIEmbeddingFunction may be used to handle very large code entities
     embedder = embedding_functions.OpenAIEmbeddingFunction(
         api_key=openai_api_key,
         model_name=embedding_model_name,

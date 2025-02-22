@@ -17,6 +17,8 @@
 Ensure you have Python 3.12 or higher installed. You can install `repo_qa` using Poetry:
 
 ```bash
+pip install poetry
+cd repo_qa
 poetry install
 ```
 

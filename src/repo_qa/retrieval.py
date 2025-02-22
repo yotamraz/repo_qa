@@ -1,8 +1,6 @@
 
-import chromadb
 from loguru import logger
 
-from .indexing import build_index
 from .config import SystemConfig
 
 def retrieve_with_callgraph(question: str,
