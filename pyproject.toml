@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "repo_qa"
+version = "0.1.0"
+description = "Q&A on any python repo with LLMs"
+readme = "README.md"
+license = "MIT"
+authors = ["Yotam Raz <yotamraz2007@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+setuptools = "^75.8.0"
+fastapi = "0.85.1"
+uvicorn = "0.34.0"
+openai = "0.28"
+chromadb = "0.3.29"
+requests = "2.32.3"
+python-dotenv = "1.0.1"
+loguru = "0.7.3"
+tqdm = "4.67.1"
+rouge-score = "0.1.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+repo_qa = "repo_qa.api:main"
