@@ -67,7 +67,7 @@ def health():
 def parse_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--env_file", type=str, default="./.env", help="path to .env file")
+    parser.add_argument("--env_file", type=str, default=".env", help="path to .env file")
     parser.add_argument("--host", type=str, default="0.0.0.0", help="api host")
     parser.add_argument("--port", type=int, default=8000, help="api port")
 
